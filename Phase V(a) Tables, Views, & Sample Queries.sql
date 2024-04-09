@@ -2,7 +2,7 @@ CREATE TABLE Doe (TotalPoints int, GoatId int, BirthWeight float, Weight float, 
 CREATE TABLE Siblings (SiblingId int, SiblingPoints int);
 CREATE TABLE Children (MotherId int, GoatId int, Points int, Weight float, WeanWeeks int, VigorScore int, Date date);
 CREATE TABLE Milk (GoatId int, Points int);
-CREATE TABLE Price (Worded Price int, Points int, GoatId int);
+CREATE TABLE Price (WordedPrice int, Points int, GoatId int);
 
 CREATE VIEW DoeBW AS
 SELECT Weight, Points
