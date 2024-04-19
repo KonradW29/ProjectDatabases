@@ -193,20 +193,41 @@ CREATE VIEW DamMilk(animal_id,milk) AS
 
 UPDATE GoatAttributes
 SET pointVal=pointVal+3
-WHERE trait_code=357 and alpha_value<= '6' and alpha_value> '0';
+WHERE trait_code=357 and alpha_value <= '6' and alpha_value > '0';
 
 UPDATE GoatAttributes
 SET pointVal=pointVal+5
 WHERE trait_code=357 and alpha_value > '6';
 
+
+
 UPDATE GoatAttributes
-SET pointVal=pointVal+5
-WHERE trait_code=230 and alpha_value > '6';
+SET pointVal = pointVal + 2
+WHERE alpha_value = '1 Single';
 
+UPDATE GoatAttributes
+SET pointVal = pointVal + 3
+WHERE alpha_value = '3 Triplets';
 
-CREATE VIEW AllAttributes (bwt,vigor,children,milk,pointVal)
-SELECT BirthWeights.birth_weight,VigorScores.vigorScores,NumOfKids.children,DamMilk.milk
-FROM DamMilk JOIN(NumOfKids JOIN(VigorScores JOIN BirthWeights ON animal_id) ON animal_id) ON animal_id
+UPDATE GoatAttributes
+SET pointVal = pointVal + 4
+WHERE alpha_value = '2 Twins';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 4
+WHERE alpha_value = '1 Good Milk';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 1
+WHERE alpha_value = '2 Poor Milk';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 5
+WHERE alpha_value = 'Good mom';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 1
+WHERE alpha_value = 'Slow to mother';
 
 DROP TABLE Animal;
 DROP TABLE Note;
