@@ -109,6 +109,10 @@ value varchar(30)
 -- read the CSV file into the table
 \copy PicklistValue from 'PicklistValue.csv' WITH DELIMITER ',' CSV HEADER;
 
+DROP VIEW BirthWeights;
+DROP VIEW VigorScores;
+DROP VIEW NumOfKids;
+DROP VIEW DamMilk;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
 CREATE TABLE Goats(
@@ -137,24 +141,34 @@ CREATE TABLE GoatAttributes
 (
     animal_id integer NOT NULL,
     trait_code integer NOT NULL,
-    alpha_value varchar(20) NOT NULL default ''
+    alpha_value varchar(20) default '',
+    pointVal integer NOT NULL default 0
 );
 
 INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
 SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
 FROM Animal;
 
-INSERT INTO GoatAttributes(animal_id,trait_code,alpha_value)
-SELECT animal_id,trait_code,alpha_value
+INSERT INTO GoatAttributes(animal_id,trait_code,alpha_value,pointVal)
+SELECT animal_id,trait_code,alpha_value,0
 FROM SessionAnimalTrait;
 
-DROP VIEW BirthWeights;
-DROP VIEW VigorScores;
-DROP VIEW NumOfKids;
-DROP VIEW DamMilk;
+DROP VIEW Doe;
+DROP VIEW Child;
+
+CREATE VIEW Doe  AS
+    SELECT *
+    FROM Goats
+    WHERE sex='Female';
+
+CREATE VIEW Child AS
+    SELECT *
+    FROM Goats, Doe
+    WHERE Goats.dam=Doe.dam;
+
 
 CREATE VIEW BirthWeights (animal_id,birth_weight) AS
-    SELECT animal_id, MAX(alpha_value)
+    SELECT animal_id, CAST(MAX(alpha_value) AS int)
     FROM GoatAttributes 
     WHERE trait_code=357
     GROUP BY animal_id;
@@ -171,12 +185,28 @@ CREATE VIEW NumOfKids(animal_id,children) AS
     WHERE trait_code=486
     GROUP BY animal_id;
 
-CREATE VIEW DamMilk(animal_id,DamMilk) AS
+CREATE VIEW DamMilk(animal_id,milk) AS
     SELECT animal_id, MAX(alpha_value)
     FROM GoatAttributes
     WHERE trait_code=475
     GROUP BY animal_id;
 
+UPDATE GoatAttributes
+SET pointVal=pointVal+3
+WHERE trait_code=357 and alpha_value<= '6' and alpha_value> '0';
+
+UPDATE GoatAttributes
+SET pointVal=pointVal+5
+WHERE trait_code=357 and alpha_value > '6';
+
+UPDATE GoatAttributes
+SET pointVal=pointVal+5
+WHERE trait_code=230 and alpha_value > '6';
+
+
+CREATE VIEW AllAttributes (bwt,vigor,children,milk,pointVal)
+SELECT BirthWeights.birth_weight,VigorScores.vigorScores,NumOfKids.children,DamMilk.milk
+FROM DamMilk JOIN(NumOfKids JOIN(VigorScores JOIN BirthWeights ON animal_id) ON animal_id) ON animal_id
 
 DROP TABLE Animal;
 DROP TABLE Note;
