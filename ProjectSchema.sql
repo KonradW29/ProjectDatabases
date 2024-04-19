@@ -109,10 +109,6 @@ value varchar(30)
 -- read the CSV file into the table
 \copy PicklistValue from 'PicklistValue.csv' WITH DELIMITER ',' CSV HEADER;
 
-DROP VIEW BirthWeights;
-DROP VIEW VigorScores;
-DROP VIEW NumOfKids;
-DROP VIEW DamMilk;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
 CREATE TABLE Goats(
@@ -153,43 +149,6 @@ INSERT INTO GoatAttributes(animal_id,trait_code,alpha_value,pointVal)
 SELECT animal_id,trait_code,alpha_value,0
 FROM SessionAnimalTrait;
 
-DROP VIEW Doe;
-DROP VIEW Child;
-
-CREATE VIEW Doe  AS
-    SELECT *
-    FROM Goats
-    WHERE sex='Female';
-
-CREATE VIEW Child AS
-    SELECT *
-    FROM Goats, Doe
-    WHERE Goats.dam=Doe.dam;
-
-
-CREATE VIEW BirthWeights (animal_id,birth_weight) AS
-    SELECT animal_id, CAST(MAX(alpha_value) AS int)
-    FROM GoatAttributes 
-    WHERE trait_code=357
-    GROUP BY animal_id;
-
-CREATE VIEW VigorScores (animal_id,vigorScores) AS
-    SELECT animal_id, MAX(alpha_value)
-    FROM GoatAttributes
-    WHERE trait_code=230
-    GROUP BY animal_id;
-
-CREATE VIEW NumOfKids(animal_id,children) AS
-    SELECT animal_id, MAX(alpha_value)
-    FROM GoatAttributes
-    WHERE trait_code=486
-    GROUP BY animal_id;
-
-CREATE VIEW DamMilk(animal_id,milk) AS
-    SELECT animal_id, MAX(alpha_value)
-    FROM GoatAttributes
-    WHERE trait_code=475
-    GROUP BY animal_id;
 
 UPDATE GoatAttributes
 SET pointVal=pointVal+3
@@ -204,9 +163,20 @@ SET pointVal=pointVal+5
 WHERE trait_code=230 and alpha_value > '6';
 
 
-CREATE VIEW AllAttributes (bwt,vigor,children,milk,pointVal)
-SELECT BirthWeights.birth_weight,VigorScores.vigorScores,NumOfKids.children,DamMilk.milk
-FROM DamMilk JOIN(NumOfKids JOIN(VigorScores JOIN BirthWeights ON animal_id) ON animal_id) ON animal_id
+CREATE VIEW HighQuality (goat_id,dam,quality,totalPoints)
+SELECT Goats.animal_id,Goats.dam,'High',GoatAttributes
+FROM Goats INNER JOIN GoatAttributes ON Goats.animal_id=GoatAttributes.animal_id
+WHERE GoatAttributes.pointVal >= 20;
+
+CREATE VIEW MiddleQuality (goat_id,dam,quality,totalPoints)
+SELECT Goats.animal_id,Goats.dam,'Average',GoatAttributes
+FROM Goats INNER JOIN GoatAttributes ON Goats.animal_id=GoatAttributes.animal_id
+WHERE GoatAttributes.pointVal >= 10 AND GoatAttributes.pointVal<20;
+
+CREATE VIEW LowQuality (goat_id,dam,quality,totalPoints)
+SELECT Goats.animal_id,Goats.dam,'Low',GoatAttributes
+FROM Goats INNER JOIN GoatAttributes ON Goats.animal_id=GoatAttributes.animal_id
+WHERE GoatAttributes.pointVal<10;
 
 DROP TABLE Animal;
 DROP TABLE Note;
