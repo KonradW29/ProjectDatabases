@@ -152,13 +152,41 @@ FROM SessionAnimalTrait;
 
 UPDATE GoatAttributes
 SET pointVal=pointVal+3
-WHERE trait_code=357 and alpha_value<= '6' and alpha_value> '0';
+WHERE trait_code=357 and alpha_value <= '6' and alpha_value > '0';
 
 UPDATE GoatAttributes
 SET pointVal=pointVal+5
 WHERE trait_code=357 and alpha_value > '6';
 
+
+
 UPDATE GoatAttributes
+SET pointVal = pointVal + 2
+WHERE alpha_value = '1 Single';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 3
+WHERE alpha_value = '3 Triplets';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 4
+WHERE alpha_value = '2 Twins';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 4
+WHERE alpha_value = '1 Good Milk';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 1
+WHERE alpha_value = '2 Poor Milk';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 5
+WHERE alpha_value = 'Good mom';
+
+UPDATE GoatAttributes
+SET pointVal = pointVal + 1
+WHERE alpha_value = 'Slow to mother';
 SET pointVal=pointVal+5
 WHERE trait_code=230 and alpha_value > '6';
 
