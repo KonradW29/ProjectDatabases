@@ -175,43 +175,62 @@ SELECT animal_id, COUNT(wean)
 FROM GoatActivity
 GROUP BY animal_id;
 
+/*Updating GoatAttributes to insert point values*/
+/*Birth weight points*/
 UPDATE GoatAttributes
-SET pointVal=3
+SET pointVal = pointVal + 3
 WHERE trait_code=357 and alpha_value <= '6' and alpha_value > '0';
 
 UPDATE GoatAttributes
-SET pointVal= 5
+SET pointVal = pointVal + 5
 WHERE trait_code=357 and alpha_value > '6';
 
+/*Sibling points*/
 UPDATE GoatAttributes
-SET pointVal =  2
+SET pointVal = pointVal + 2
 WHERE alpha_value = '1 Single';
 
 UPDATE GoatAttributes
-SET pointVal = 3
+SET pointVal = pointVal + 3
 WHERE alpha_value = '3 Triplets';
 
 UPDATE GoatAttributes
-SET pointVal =  4
+SET pointVal = pointVal + 4
 WHERE alpha_value = '2 Twins';
 
+/*Milking points*/
 UPDATE GoatAttributes
-SET pointVal = 4
+SET pointVal = pointVal + 4
 WHERE alpha_value = '1 Good Milk';
 
 UPDATE GoatAttributes
-SET pointVal = 1
-WHERE alpha_value = '2 Poor Milk';
+SET pointVal = pointVal + 1
+WHERE alpha_value = '2 Poor Milk' or alpha_value = 'OK milk';
+
+/*Mothering points*/
+UPDATE GoatAttributes
+SET pointVal = pointVal + 5
+WHERE trait_code = 740 and alpha_value = 'Good mom';
 
 UPDATE GoatAttributes
-SET pointVal =  5
-WHERE alpha_value = 'Good mom';
+SET pointVal = pointVal + 1
+WHERE trait_code = 740 and alpha_value != 'Good mom' and alpha_value != '';
+
+/*Vigor points*/
+UPDATE GoatAttributes
+SET pointVal = pointVal + 5
+WHERE trait_code = 230 and alpha_value = '1';
 
 UPDATE GoatAttributes
-SET pointVal = 1
-WHERE alpha_value = 'Slow to mother';
+SET pointVal = pointVal + 3
+WHERE trait_code = 230 and alpha_value = '2';
 
+UPDATE GoatAttributes
+SET pointVal = pointVal + 1
+WHERE trait_code = 230 and alpha_value != '1' and alpha_value != '2' and alpha_value != '';
 
+/*Number weaned points*/
+/*Still needs to be done*/
 
 CREATE VIEW SumOfPoints (animal_id,totalPoints) AS 
 SELECT animal_id, SUM(pointVal)
