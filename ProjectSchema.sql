@@ -1,3 +1,8 @@
+
+DROP VIEW DamMilk;
+DROP VIEW BirthWeights;
+DROP VIEW NumOfKids;
+DROP VIEW VigorScores;
 DROP TABLE Animal;
 CREATE TABLE Animal (
     animal_id integer primary key,
@@ -109,8 +114,13 @@ value varchar(30)
 -- read the CSV file into the table
 \copy PicklistValue from 'PicklistValue.csv' WITH DELIMITER ',' CSV HEADER;
 
+DROP VIEW HighQuality;
+DROP VIEW MiddleQuality;
+DROP VIEW LowQuality;
+DROP VIEW SumOfPoints;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
+DROP TABLE GoatActivity;
 CREATE TABLE Goats(
     animal_id integer primary key,
     lrid integer NOT NULL default 0,
@@ -125,6 +135,7 @@ CREATE TABLE Goats(
     weaned integer NOT NULL default 0 ,
     tag_sorter varchar(48) NOT NULL default '',
     esi timestamp,
+    status varchar(20) NOT NULL default '',
     overall_adg varchar(20) NOT NULL default '',
     current_adg varchar(20) NOT NULL default '',
     last_weight varchar(20) NOT NULL default '',
@@ -140,72 +151,87 @@ CREATE TABLE GoatAttributes
     alpha_value varchar(20) default '',
     pointVal integer NOT NULL default 0
 );
+CREATE TABLE GoatActivity
+(
+    animal_id integer NOT NULL,
+    activity_code integer NOT NULL,
+    alpha_value varchar(20) default ''
+);
 
-INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
-SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
+INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,status,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
+SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,status,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
 FROM Animal;
 
 INSERT INTO GoatAttributes(animal_id,trait_code,alpha_value,pointVal)
 SELECT animal_id,trait_code,alpha_value,0
 FROM SessionAnimalTrait;
 
+INSERT INTO GoatActivity(animal_id,activity_code,alpha_value)
+SELECT animal_id, activity_code ,alpha_value
+FROM SessionAnimalActivity;
+
+CREATE VIEW Weaned(animal_id,wean) AS
+SELECT animal_id, COUNT(wean)
+FROM GoatActivity
+GROUP BY animal_id;
 
 UPDATE GoatAttributes
-SET pointVal=pointVal+3
+SET pointVal=3
 WHERE trait_code=357 and alpha_value <= '6' and alpha_value > '0';
 
 UPDATE GoatAttributes
-SET pointVal=pointVal+5
+SET pointVal= 5
 WHERE trait_code=357 and alpha_value > '6';
 
-
-
 UPDATE GoatAttributes
-SET pointVal = pointVal + 2
+SET pointVal =  2
 WHERE alpha_value = '1 Single';
 
 UPDATE GoatAttributes
-SET pointVal = pointVal + 3
+SET pointVal = 3
 WHERE alpha_value = '3 Triplets';
 
 UPDATE GoatAttributes
-SET pointVal = pointVal + 4
+SET pointVal =  4
 WHERE alpha_value = '2 Twins';
 
 UPDATE GoatAttributes
-SET pointVal = pointVal + 4
+SET pointVal = 4
 WHERE alpha_value = '1 Good Milk';
 
 UPDATE GoatAttributes
-SET pointVal = pointVal + 1
+SET pointVal = 1
 WHERE alpha_value = '2 Poor Milk';
 
 UPDATE GoatAttributes
-SET pointVal = pointVal + 5
+SET pointVal =  5
 WHERE alpha_value = 'Good mom';
 
 UPDATE GoatAttributes
-SET pointVal = pointVal + 1
+SET pointVal = 1
 WHERE alpha_value = 'Slow to mother';
-SET pointVal=pointVal+5
-WHERE trait_code=230 and alpha_value > '6';
 
 
-CREATE VIEW HighQuality (goat_id,dam,quality,totalPoints)
-SELECT Goats.animal_id,Goats.dam,'High',GoatAttributes
-FROM Goats INNER JOIN GoatAttributes ON Goats.animal_id=GoatAttributes.animal_id
-WHERE GoatAttributes.pointVal >= 20;
 
-CREATE VIEW MiddleQuality (goat_id,dam,quality,totalPoints)
-SELECT Goats.animal_id,Goats.dam,'Average',GoatAttributes
-FROM Goats INNER JOIN GoatAttributes ON Goats.animal_id=GoatAttributes.animal_id
-WHERE GoatAttributes.pointVal >= 10 AND GoatAttributes.pointVal<20;
+CREATE VIEW SumOfPoints (animal_id,totalPoints) AS 
+SELECT animal_id, SUM(pointVal)
+FROM GoatAttributes
+GROUP BY animal_id;
 
-CREATE VIEW LowQuality (goat_id,dam,quality,totalPoints)
-SELECT Goats.animal_id,Goats.dam,'Low',GoatAttributes
-FROM Goats INNER JOIN GoatAttributes ON Goats.animal_id=GoatAttributes.animal_id
-WHERE GoatAttributes.pointVal<10;
+CREATE VIEW HighQuality (goat_id,dam,quality,totalPoints) AS 
+SELECT Goats.animal_id,Goats.dam,'High', SumOfPoints.totalPoints
+FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id
+WHERE SumOfPoints.totalPoints >= 750;
 
+CREATE VIEW MiddleQuality (goat_id,dam,quality) AS 
+SELECT Goats.animal_id,Goats.dam,'Average', SumOfPoints.totalPoints
+FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id
+WHERE SumOfPoints.totalPoints >= 350 AND SumOfPoints.totalPoints<750;
+
+CREATE VIEW LowQuality (goat_id,dam,quality) AS 
+SELECT Goats.animal_id,Goats.dam,'Low', SumOfPoints.totalPoints
+FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id
+WHERE SumOfPoints.totalPoints < 350 AND SumOfPoints.totalPoints > 0;
 DROP TABLE Animal;
 DROP TABLE Note;
 DROP TABLE PicklistValue;
