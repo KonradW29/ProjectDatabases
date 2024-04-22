@@ -264,14 +264,14 @@ FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id;
 CREATE VIEW HighQuality (quality, animal_id,dam,totalPoints) AS 
 SELECT 'High', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
-WHERE totalPoints >= 750;
+WHERE totalPoints >= 60;
 
 CREATE VIEW MiddleQuality (quality, animal_id,dam,totalPoints) AS
 SELECT 'Middle', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
-WHERE totalPoints >= 350 AND totalPoints <750;
+WHERE totalPoints >= 20 AND totalPoints <60;
 
 CREATE VIEW LowQuality (quality, animal_id,dam,totalPoints) AS 
 SELECT 'Low', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
-WHERE totalPoints < 350 AND totalPoints > 0;
+WHERE totalPoints < 20 AND totalPoints > 0;
