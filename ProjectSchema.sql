@@ -1,8 +1,3 @@
-
-DROP VIEW DamMilk;
-DROP VIEW BirthWeights;
-DROP VIEW NumOfKids;
-DROP VIEW VigorScores;
 DROP TABLE Animal;
 CREATE TABLE Animal (
     animal_id integer primary key,
