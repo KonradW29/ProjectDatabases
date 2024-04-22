@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lan = "en">
+<head>
+    <title>Goat Database GUI</title>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "wideth=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>Goat Database</h1><br><br>
+    <div>
+        <h2>Search by goat id</h2>
+        <p>Enter the id of the goat you want to search below:</p>
+    </div>
+    <div>
+        <form action = "/SearchGoatId" method="POST">
+            <input type = "number" name = "animal_id"><br>
+            <input type = "submit" value = "Enter"><br><br><br><br>
+        </form>
+    </div>
+    <div>
+        <h2>Search by group</h2>
+        <p>Enter the group of goats you want to search below:</p>
+    </div>
+    <div>
+        <form action = "/SearchGroup" method="POST">
+            <input type = "text" name = "group"><br>
+            <input type = "submit" value = "Enter"><br><br>
+        </form>
+    </div>
+    <div>
+        <br><br>
+        <button type = "button" onclick = "getHelp()">Help</button>
+        <p id = "helpSection", hidden = "hidden">Helpful Information</p>
+        <script>
+            function getHelp() {
+                let p = document.getElementById("helpSection");
+                p.removeAttribute("hidden");
+            }
+        </script>
+    </div>
+</body>
+</html>
