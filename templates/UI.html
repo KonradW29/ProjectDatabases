@@ -19,7 +19,7 @@
     </div>
     <div>
         <h2>Search by group</h2>
-        <p>Enter the group of goats you want to search below:</p>
+        <p>Enter the quality range of goats you want to search below (Low, Middle, High):</p>
     </div>
     <div>
         <form action = "/SearchGroup" method="POST">
@@ -30,7 +30,7 @@
     <div>
         <br><br>
         <button type = "button" onclick = "getHelp()">Help</button>
-        <p id = "helpSection", hidden = "hidden">Helpful Information</p>
+        <p id = "helpSection", hidden = "hidden">The first box searches for a goat based on the provided goat id. The second box returns the goats that fall into one of the 3 quality ranges that are selected.</p>
         <script>
             function getHelp() {
                 let p = document.getElementById("helpSection");

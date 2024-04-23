@@ -126,7 +126,6 @@ DROP VIEW SoloGoats;
 DROP VIEW SumOfPoints;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
---DROP TABLE GoatActivity;
 
 
 CREATE TABLE Goats(
@@ -161,15 +160,6 @@ CREATE TABLE GoatAttributes
     pointVal integer NOT NULL default 0
 );
 
-
-/*
-CREATE TABLE GoatActivity
-(
-    animal_id integer NOT NULL,
-    activity_code integer NOT NULL
-);
-*/
-
 INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
 SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
 FROM Animal;
@@ -178,18 +168,6 @@ INSERT INTO GoatAttributes(animal_id,trait_code,alpha_value,pointVal)
 SELECT animal_id,trait_code,alpha_value,0
 FROM SessionAnimalTrait;
 
-/*
-INSERT INTO GoatActivity(animal_id,activity_code)
-SELECT animal_id, activity_code
-FROM SessionAnimalActivity;
-*/
-
-/*
-CREATE VIEW Weaned(animal_id,wean) AS
-SELECT animal_id, COUNT(wean)
-FROM GoatActivity
-GROUP BY animal_id;
-*/
 
 /*Updating GoatAttributes to insert point values*/
 /*Birth weight points*/
@@ -240,12 +218,6 @@ WHERE trait_code = 230 and alpha_value = '1';
 UPDATE GoatAttributes
 SET pointVal = pointVal + 3
 WHERE trait_code = 230 and alpha_value = '2';
-
-/*
-UPDATE GoatAttributes
-SET pointVal = pointVal + 1
-WHERE trait_code = 230 and alpha_value != '1' and alpha_value != '2' and alpha_value != '';
-*/
 
 /*Number weaned points*/
 /*Still needs to be done*/
