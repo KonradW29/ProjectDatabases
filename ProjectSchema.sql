@@ -121,7 +121,6 @@ CREATE TABLE SessionAnimalTrait (
 DROP VIEW HighSold;
 DROP VIEW MiddleSold;
 DROP VIEW LowSold;
-DROP VIEW SoldCount;
 DROP VIEW HighQuality;
 DROP VIEW MiddleQuality;
 DROP VIEW LowQuality;
@@ -130,9 +129,8 @@ DROP VIEW SumOfPoints;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
 
-
-
-CREATE TABLE Goats(
+CREATE TABLE Goats
+(
     animal_id integer primary key,
     lrid integer NOT NULL default 0,
     tag varchar(16) NOT NULL default '',
@@ -147,7 +145,7 @@ CREATE TABLE Goats(
     tag_sorter varchar(48) NOT NULL default '',
     esi timestamp,
     status varchar(20) NOT NULL default '',
-    status_date timestamp,
+    stat_date timestamp,
     overall_adg varchar(20) NOT NULL default '',
     current_adg varchar(20) NOT NULL default '',
     last_weight varchar(20) NOT NULL default '',
@@ -166,7 +164,7 @@ CREATE TABLE GoatAttributes
 );
 
 
-INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,status_date,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
+INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,stat_date,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
 SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,status_date,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
 FROM Animal;
 
@@ -225,10 +223,25 @@ UPDATE GoatAttributes
 SET pointVal = pointVal + 3
 WHERE trait_code = 230 and alpha_value = '2';
 
+DROP VIEW DOBInfo;
+CREATE VIEW DOBInfo (dob_year, dob_month, dob_day)  AS 
+SELECT EXTRACT(YEAR FROM Goats.dob) AS dob_year,
+EXTRACT(MONTH FROM Goats.dob) AS dob_month,
+EXTRACT(DAY FROM Goats.dob) AS dob_day
+FROM Goats;
+
+DROP VIEW StatInfo;
+CREATE VIEW StatInfo (stat_year, stat_month, stat_day)  AS 
+SELECT EXTRACT(YEAR FROM Goats.stat_date) AS stat_year,
+EXTRACT(MONTH FROM Goats.stat_date) AS stat_month,
+EXTRACT(DAY FROM Goats.stat_date) AS stat_day
+FROM Goats;
+
 /*Number weaned points*/
 UPDATE GoatAttributes
 SET pointVal= pointVal +5
-WHERE status_date-dob>=90 AND status=='Dead';
+FROM StatInfo, DOBInfo, Goats
+WHERE (stat_year*365+stat_month*30+stat_day)-(dob_year*365+dob_month*30+dob_day)>=90 AND status='Dead';
 
 CREATE VIEW SumOfPoints (animal_id,totalPoints) AS 
 SELECT animal_id, SUM(pointVal)
