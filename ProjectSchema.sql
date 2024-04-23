@@ -129,10 +129,7 @@ DROP VIEW SoloGoats;
 DROP VIEW SumOfPoints;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
-<<<<<<< HEAD
 
-=======
->>>>>>> c9558ba0b68cc02794463807d98532a80af8b3e0
 
 
 CREATE TABLE Goats(
@@ -150,6 +147,7 @@ CREATE TABLE Goats(
     tag_sorter varchar(48) NOT NULL default '',
     esi timestamp,
     status varchar(20) NOT NULL default '',
+    status_date timestamp,
     overall_adg varchar(20) NOT NULL default '',
     current_adg varchar(20) NOT NULL default '',
     last_weight varchar(20) NOT NULL default '',
@@ -167,14 +165,9 @@ CREATE TABLE GoatAttributes
     pointVal integer NOT NULL default 0
 );
 
-<<<<<<< HEAD
 
-INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
-SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
-=======
-INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
-SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
->>>>>>> c9558ba0b68cc02794463807d98532a80af8b3e0
+INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,status_date,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
+SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,status_date,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
 FROM Animal;
 
 INSERT INTO GoatAttributes(animal_id,trait_code,alpha_value,pointVal)
@@ -182,11 +175,8 @@ SELECT animal_id,trait_code,alpha_value,0
 FROM SessionAnimalTrait;
 
 
-<<<<<<< HEAD
-=======
 /*Updating GoatAttributes to insert point values*/
 /*Birth weight points*/
->>>>>>> c9558ba0b68cc02794463807d98532a80af8b3e0
 UPDATE GoatAttributes
 SET pointVal = pointVal + 3
 WHERE trait_code=357 and alpha_value <= '6' and alpha_value > '0';
@@ -235,17 +225,10 @@ UPDATE GoatAttributes
 SET pointVal = pointVal + 3
 WHERE trait_code = 230 and alpha_value = '2';
 
-<<<<<<< HEAD
-/*
-UPDATE GoatAttributes
-SET pointVal = pointVal + 1
-WHERE trait_code = 230 and alpha_value != '1' and alpha_value != '2' and alpha_value != '';
-*/
-
-=======
 /*Number weaned points*/
-/*Still needs to be done*/
->>>>>>> c9558ba0b68cc02794463807d98532a80af8b3e0
+UPDATE GoatAttributes
+SET pointVal= pointVal +5
+WHERE status_date-dob>=90 AND status=='Dead';
 
 CREATE VIEW SumOfPoints (animal_id,totalPoints) AS 
 SELECT animal_id, SUM(pointVal)
