@@ -118,6 +118,7 @@ CREATE TABLE SessionAnimalTrait (
 -- read the CSV file into the table
 \copy PicklistValue from 'PicklistValue.csv' WITH DELIMITER ',' CSV HEADER;
 
+
 DROP VIEW HighSold;
 DROP VIEW MiddleSold;
 DROP VIEW LowSold;
@@ -126,11 +127,14 @@ DROP VIEW MiddleQuality;
 DROP VIEW LowQuality;
 DROP VIEW SoloGoats;
 DROP VIEW SumOfPoints;
+DROP VIEW AllDateInfo;
+DROP VIEW DOBInfo;
+DROP VIEW StatInfo;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
 
-CREATE TABLE Goats
-(
+
+CREATE TABLE Goats (
     animal_id integer primary key,
     lrid integer NOT NULL default 0,
     tag varchar(16) NOT NULL default '',
@@ -155,8 +159,7 @@ CREATE TABLE Goats
 );
 
 
-CREATE TABLE GoatAttributes
-(
+CREATE TABLE GoatAttributes (
     animal_id integer NOT NULL,
     trait_code integer NOT NULL,
     alpha_value varchar(20) default '',
@@ -223,36 +226,42 @@ UPDATE GoatAttributes
 SET pointVal = pointVal + 3
 WHERE trait_code = 230 and alpha_value = '2';
 
-DROP VIEW DOBInfo;
-CREATE VIEW DOBInfo (dob_year, dob_month, dob_day)  AS 
-SELECT EXTRACT(YEAR FROM Goats.dob) AS dob_year,
+/*Number weaned points*/
+CREATE VIEW DOBInfo (animal_id, dob_year, dob_month, dob_day)  AS 
+SELECT Goats.animal_id,
+EXTRACT(YEAR FROM Goats.dob) AS dob_year,
 EXTRACT(MONTH FROM Goats.dob) AS dob_month,
 EXTRACT(DAY FROM Goats.dob) AS dob_day
 FROM Goats;
 
-DROP VIEW StatInfo;
-CREATE VIEW StatInfo (stat_year, stat_month, stat_day)  AS 
-SELECT EXTRACT(YEAR FROM Goats.stat_date) AS stat_year,
+CREATE VIEW StatInfo (animal_id, stat_year, stat_month, stat_day)  AS 
+SELECT Goats.animal_id,
+EXTRACT(YEAR FROM Goats.stat_date) AS stat_year,
 EXTRACT(MONTH FROM Goats.stat_date) AS stat_month,
 EXTRACT(DAY FROM Goats.stat_date) AS stat_day
 FROM Goats;
 
-/*Number weaned points*/
+CREATE VIEW AllDateInfo (animal_id, dob_year, dob_month, dob_day, stat_year, stat_month, stat_day) AS
+SELECT DOBInfo.animal_id, DOBInfo.dob_year, DOBInfo.dob_month, DOBInfo.dob_day, StatInfo.stat_year, StatInfo.stat_month, StatInfo.stat_day
+FROM DOBInfo 
+INNER JOIN StatInfo ON DOBInfo.animal_id = StatInfo.animal_id
+WHERE (stat_year*365+stat_month*30+stat_day) - (dob_year*365+dob_month*30+dob_day) >= 90;
+
+/*
 UPDATE GoatAttributes
-SET pointVal= pointVal +5
-FROM StatInfo, DOBInfo, Goats
-WHERE (stat_year*365+stat_month*30+stat_day)-(dob_year*365+dob_month*30+dob_day)>=90 AND status='Dead';
+SET pointVal= pointVal + 5
+FROM StatInfo, DOBInfo
+WHERE (stat_year*365+stat_month*30+stat_day) - (dob_year*365+dob_month*30+dob_day) >= 90;
+*/
 
 CREATE VIEW SumOfPoints (animal_id,totalPoints) AS 
 SELECT animal_id, SUM(pointVal)
 FROM GoatAttributes
 GROUP BY animal_id;
 
-
 CREATE VIEW SoloGoats (quality, animal_id,dam,totalPoints) AS
 SELECT '', Goats.animal_id, Goats.dam, SumOfPoints.totalPoints
 FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id;
-
 
 CREATE VIEW HighQuality (quality, animal_id,dam,totalPoints) AS 
 SELECT 'High', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
