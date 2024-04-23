@@ -118,7 +118,10 @@ CREATE TABLE SessionAnimalTrait (
 -- read the CSV file into the table
 \copy PicklistValue from 'PicklistValue.csv' WITH DELIMITER ',' CSV HEADER;
 
-
+DROP VIEW HighSold;
+DROP VIEW MiddleSold;
+DROP VIEW LowSold;
+DROP VIEW SoldCount;
 DROP VIEW HighQuality;
 DROP VIEW MiddleQuality;
 DROP VIEW LowQuality;
@@ -126,7 +129,7 @@ DROP VIEW SoloGoats;
 DROP VIEW SumOfPoints;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
---DROP TABLE GoatActivity;
+
 
 
 CREATE TABLE Goats(
@@ -162,37 +165,15 @@ CREATE TABLE GoatAttributes
 );
 
 
-/*
-CREATE TABLE GoatActivity
-(
-    animal_id integer NOT NULL,
-    activity_code integer NOT NULL
-);
-*/
-
-INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
-SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
+INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
+SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
 FROM Animal;
 
 INSERT INTO GoatAttributes(animal_id,trait_code,alpha_value,pointVal)
 SELECT animal_id,trait_code,alpha_value,0
 FROM SessionAnimalTrait;
 
-/*
-INSERT INTO GoatActivity(animal_id,activity_code)
-SELECT animal_id, activity_code
-FROM SessionAnimalActivity;
-*/
 
-/*
-CREATE VIEW Weaned(animal_id,wean) AS
-SELECT animal_id, COUNT(wean)
-FROM GoatActivity
-GROUP BY animal_id;
-*/
-
-/*Updating GoatAttributes to insert point values*/
-/*Birth weight points*/
 UPDATE GoatAttributes
 SET pointVal = pointVal + 3
 WHERE trait_code=357 and alpha_value <= '6' and alpha_value > '0';
@@ -247,8 +228,6 @@ SET pointVal = pointVal + 1
 WHERE trait_code = 230 and alpha_value != '1' and alpha_value != '2' and alpha_value != '';
 */
 
-/*Number weaned points*/
-/*Still needs to be done*/
 
 CREATE VIEW SumOfPoints (animal_id,totalPoints) AS 
 SELECT animal_id, SUM(pointVal)
@@ -264,14 +243,32 @@ FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id;
 CREATE VIEW HighQuality (quality, animal_id,dam,totalPoints) AS 
 SELECT 'High', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
-WHERE totalPoints >= 60;
+WHERE totalPoints >= 80;
 
 CREATE VIEW MiddleQuality (quality, animal_id,dam,totalPoints) AS
 SELECT 'Middle', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
-WHERE totalPoints >= 20 AND totalPoints <60;
+WHERE totalPoints >= 30 AND totalPoints <80;
 
 CREATE VIEW LowQuality (quality, animal_id,dam,totalPoints) AS 
 SELECT 'Low', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
-WHERE totalPoints < 20 AND totalPoints > 0;
+WHERE totalPoints < 30 AND totalPoints > 0;
+
+CREATE VIEW HighSold(quality,SoldCount) AS
+SELECT HighQuality.quality, Count(status)
+FROM HighQuality INNER JOIN Goats ON HighQuality.animal_id=Goats.animal_id
+WHERE Goats.status='Sold'
+GROUP BY HighQuality.quality;
+
+CREATE VIEW MiddleSold(quality,SoldCount) AS
+SELECT MiddleQuality.quality, Count(status)
+FROM MiddleQuality INNER JOIN Goats ON MiddleQuality.animal_id=Goats.animal_id
+WHERE Goats.status='Sold'
+GROUP BY MiddleQuality.quality;
+
+CREATE VIEW LowSold(quality,SoldCount) AS
+SELECT LowQuality.quality, Count(status)
+FROM LowQuality INNER JOIN Goats ON LowQuality.animal_id=Goats.animal_id
+WHERE Goats.status='Sold'
+GROUP BY LowQuality.quality;
