@@ -247,12 +247,9 @@ FROM DOBInfo
 INNER JOIN StatInfo ON DOBInfo.animal_id = StatInfo.animal_id
 WHERE (stat_year*365+stat_month*30+stat_day) - (dob_year*365+dob_month*30+dob_day) >= 90;
 
-/*
 UPDATE GoatAttributes
 SET pointVal= pointVal + 5
-FROM StatInfo, DOBInfo
-WHERE (stat_year*365+stat_month*30+stat_day) - (dob_year*365+dob_month*30+dob_day) >= 90;
-*/
+WHERE animal_id IN (SELECT animal_id FROM AllDateInfo);
 
 CREATE VIEW SumOfPoints (animal_id,totalPoints) AS 
 SELECT animal_id, SUM(pointVal)
