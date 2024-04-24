@@ -256,22 +256,24 @@ SELECT animal_id, SUM(pointVal)
 FROM GoatAttributes
 GROUP BY animal_id;
 
-CREATE VIEW SoloGoats (quality, animal_id,dam,totalPoints) AS
-SELECT '', Goats.animal_id, Goats.dam, SumOfPoints.totalPoints
+CREATE VIEW SoloGoats (tag, quality, animal_id,dam,totalPoints) AS
+SELECT tag, '', Goats.animal_id, Goats.dam, SumOfPoints.totalPoints
 FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id;
 
-CREATE VIEW HighQuality (quality, animal_id,dam,totalPoints) AS 
-SELECT 'High', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
+
+
+CREATE VIEW HighQuality (tag, quality, animal_id,dam,totalPoints) AS 
+SELECT SoloGoats.tag, 'High', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
 WHERE totalPoints >= 80;
 
-CREATE VIEW MiddleQuality (quality, animal_id,dam,totalPoints) AS
-SELECT 'Middle', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
+CREATE VIEW MiddleQuality (tag, quality, animal_id,dam,totalPoints) AS
+SELECT SoloGoats.tag, 'Middle', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
 WHERE totalPoints >= 30 AND totalPoints <80;
 
-CREATE VIEW LowQuality (quality, animal_id,dam,totalPoints) AS 
-SELECT 'Low', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
+CREATE VIEW LowQuality (tag, quality, animal_id,dam,totalPoints) AS 
+SELECT SoloGoats.tag, 'Low', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
 WHERE totalPoints < 30 AND totalPoints > 0;
 

@@ -42,22 +42,22 @@ def form():
 # handle venue POST and serve result web page
 @app.route('/SearchGoatId', methods=['POST'])
 def SearchGoatId():
-    rows = connect('SELECT SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints FROM SoloGoats WHERE animal_id = ' + request.form['animal_id'] + ';')
-    heads = ['animal_id', 'dam', 'totalPoints']
+    rows = connect('SELECT * FROM SoloGoats WHERE dam = (SELECT dam FROM SoloGoats WHERE animal_id = ' + request.form['animal_id'] + ');')
+    heads = ['tag', 'animal_id', 'dam', 'totalPoints']
     return render_template('results.html', rows=rows, heads=heads)
 
 # handle venue POST and serve result web page
 @app.route('/SearchGroup', methods=['POST'])
 def SearchGroup():
     if (request.form['group'] == 'High'):
-        rows = connect('SELECT * FROM HighQuality')
-        heads = ['quality', 'animal_id', 'dam', 'totalPoints']
+        rows = connect('SELECT * FROM HighQuality;')
+        heads = ['tag', 'quality', 'animal_id', 'dam', 'totalPoints']
     elif (request.form['group'] == 'Middle'):
-        rows = connect('SELECT * FROM MiddleQuality')
-        heads = ['quality', 'animal_id', 'dam', 'totalPoints']
+        rows = connect('SELECT * FROM MiddleQuality;')
+        heads = ['tag', 'quality', 'animal_id', 'dam', 'totalPoints']
     elif (request.form['group'] == 'Low'):
-        rows = connect('SELECT * FROM LowQuality')
-        heads = ['quality', 'animal_id', 'dam', 'totalPoints']
+        rows = connect('SELECT * FROM LowQuality;')
+        heads = ['tag', 'quality', 'animal_id', 'dam', 'totalPoints']
     return render_template('results.html', rows=rows, heads=heads)
     
 if __name__ == '__main__':
