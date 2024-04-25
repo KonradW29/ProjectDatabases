@@ -34,20 +34,19 @@ def connect(query):
  
 app = Flask(__name__)
 
-# serve form web page
+# serve UI.html web page
 @app.route("/")
 def form():
     return render_template('UI.html')
 
-# handle SearchTag POST and serve result web page
+# handle SearchTag POST and serve results.html web page
 @app.route('/SearchTag', methods=['POST'])
 def SearchTag():
-    print(request.form['tag'])
     rows = connect('SELECT dam, tag, totalPoints FROM SoloGoats WHERE dam = (SELECT dam FROM SoloGoats WHERE tag = \'' + str(request.form['tag']) + '\');')
     heads = ['dam', 'tag', 'totalPoints']
     return render_template('results.html', rows=rows, heads=heads)
 
-# handle SearchGroup POST and serve result web page
+# handle SearchGroup POST and serve results.html web page
 @app.route('/SearchGroup', methods=['POST'])
 def SearchGroup():
     if (request.form['group'] == 'High'):
