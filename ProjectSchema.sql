@@ -1,3 +1,4 @@
+--Animal table from Animal.csv
 DROP TABLE Animal;
 CREATE TABLE Animal (
     animal_id integer primary key,
@@ -57,7 +58,7 @@ CREATE TABLE Animal (
     full_rfid_date timestamp
 );
 
-
+--Note table from Note.csv
 DROP TABLE Note;
 CREATE TABLE Note (
     animal_id integer NOT NULL,
@@ -69,7 +70,7 @@ CREATE TABLE Note (
     primary key( animal_id, created )
 );
 
-
+--SessionAnimalActivity table from SessionAnimalActivity.csv
 DROP TABLE SessionAnimalActivity;
 CREATE TABLE SessionAnimalActivity (
     session_id integer NOT NULL,
@@ -84,7 +85,7 @@ CREATE TABLE SessionAnimalActivity (
     primary key( session_id, animal_id, activity_code, when_measured )
 );
 
-
+--SessionAnimalTrait table from SessionAnimalTrait.csv
 DROP TABLE SessionAnimalTrait;
 CREATE TABLE SessionAnimalTrait (
     session_id integer NOT NULL,
@@ -118,7 +119,7 @@ CREATE TABLE SessionAnimalTrait (
 -- read the CSV file into the table
 \copy PicklistValue from 'PicklistValue.csv' WITH DELIMITER ',' CSV HEADER;
 
-
+--Dropping the views and tables to avoid creating something which already exists
 DROP VIEW HighSold;
 DROP VIEW MiddleSold;
 DROP VIEW LowSold;
@@ -127,13 +128,10 @@ DROP VIEW MiddleQuality;
 DROP VIEW LowQuality;
 DROP VIEW SoloGoats;
 DROP VIEW SumOfPoints;
-DROP VIEW AllDateInfo;
-DROP VIEW DOBInfo;
-DROP VIEW StatInfo;
 DROP TABLE Goats;
 DROP TABLE GoatAttributes;
 
-
+--The goats table that the database primarily use
 CREATE TABLE Goats (
     animal_id integer primary key,
     lrid integer NOT NULL default 0,
@@ -158,7 +156,7 @@ CREATE TABLE Goats (
     modified timestamp
 );
 
-
+--Goat attributes to hold points and keep track of traits of the goats
 CREATE TABLE GoatAttributes (
     animal_id integer NOT NULL,
     trait_code integer NOT NULL,
@@ -166,11 +164,12 @@ CREATE TABLE GoatAttributes (
     pointVal integer NOT NULL default 0
 );
 
-
+--Poppulate the goats table using the data from the animal table
 INSERT INTO Goats(animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,stat_date,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified)
 SELECT animal_id,lrid,tag,rfid,nlis,draft,sex,dob,sire,dam,weaned,tag_sorter,status,status_date,esi,overall_adg,current_adg,last_weight,last_weight_date,animal_group,modified
 FROM Animal;
 
+--Poppulate the goat attributes table using the data from the SessionAnimalTrait table
 INSERT INTO GoatAttributes(animal_id,trait_code,alpha_value,pointVal)
 SELECT animal_id,trait_code,alpha_value,0
 FROM SessionAnimalTrait;
@@ -228,66 +227,56 @@ SET pointVal = pointVal + 3
 WHERE trait_code = 230 and alpha_value = '2';
 
 /*Number weaned points*/
-CREATE VIEW DOBInfo (animal_id, dob_year, dob_month, dob_day)  AS 
-SELECT Goats.animal_id,
-EXTRACT(YEAR FROM Goats.dob) AS dob_year,
-EXTRACT(MONTH FROM Goats.dob) AS dob_month,
-EXTRACT(DAY FROM Goats.dob) AS dob_day
-FROM Goats;
-
-CREATE VIEW StatInfo (animal_id, stat_year, stat_month, stat_day)  AS 
-SELECT Goats.animal_id,
-EXTRACT(YEAR FROM Goats.stat_date) AS stat_year,
-EXTRACT(MONTH FROM Goats.stat_date) AS stat_month,
-EXTRACT(DAY FROM Goats.stat_date) AS stat_day
-FROM Goats;
-
-CREATE VIEW AllDateInfo (animal_id, dob_year, dob_month, dob_day, stat_year, stat_month, stat_day) AS
-SELECT DOBInfo.animal_id, DOBInfo.dob_year, DOBInfo.dob_month, DOBInfo.dob_day, StatInfo.stat_year, StatInfo.stat_month, StatInfo.stat_day
-FROM DOBInfo 
-INNER JOIN StatInfo ON DOBInfo.animal_id = StatInfo.animal_id
-WHERE (stat_year*365+stat_month*30+stat_day) - (dob_year*365+dob_month*30+dob_day) >= 90;
-
 UPDATE GoatAttributes
 SET pointVal= pointVal + 5
-WHERE animal_id IN (SELECT animal_id FROM AllDateInfo);
+WHERE animal_id IN (SELECT animal_id FROM Goats WHERE Goats.dob - Goats.stat_date > interval '90 days' AND Goats.status = 'Dead');
 
+/*Views which are used for the database queries*/
+
+/*View which sums up point values for each goat*/
 CREATE VIEW SumOfPoints (animal_id,totalPoints) AS 
 SELECT animal_id, SUM(pointVal)
 FROM GoatAttributes
 GROUP BY animal_id;
 
+/*View which combines the tag, animal_id, dam attributes from goats with the totalPoints attribute from SumOfPoints, and adds a new quality attribute*/
 CREATE VIEW SoloGoats (tag, quality, animal_id,dam,totalPoints) AS
 SELECT tag, '', Goats.animal_id, Goats.dam, SumOfPoints.totalPoints
 FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id;
 
+/*View which groups goats into the high quality range, based on their total points */
 CREATE VIEW HighQuality (tag, quality, animal_id,dam,totalPoints) AS 
 SELECT SoloGoats.tag, 'High', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
 WHERE totalPoints >= 80;
 
+/*View which groups goats into the middle quality range, based on their total points */
 CREATE VIEW MiddleQuality (tag, quality, animal_id,dam,totalPoints) AS
 SELECT SoloGoats.tag, 'Middle', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
 WHERE totalPoints >= 30 AND totalPoints <80;
 
+/*View which groups goats into the low quality range, based on their total points */
 CREATE VIEW LowQuality (tag, quality, animal_id,dam,totalPoints) AS 
 SELECT SoloGoats.tag, 'Low', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
 WHERE totalPoints < 30 AND totalPoints > 0;
 
+/*View which counts how many high quality goats were sold*/
 CREATE VIEW HighSold(quality,SoldCount) AS
 SELECT HighQuality.quality, Count(status)
 FROM HighQuality INNER JOIN Goats ON HighQuality.animal_id=Goats.animal_id
 WHERE Goats.status='Sold'
 GROUP BY HighQuality.quality;
 
+/*View which counts how many middle quality goats were sold*/
 CREATE VIEW MiddleSold(quality,SoldCount) AS
 SELECT MiddleQuality.quality, Count(status)
 FROM MiddleQuality INNER JOIN Goats ON MiddleQuality.animal_id=Goats.animal_id
 WHERE Goats.status='Sold'
 GROUP BY MiddleQuality.quality;
 
+/*View which counts how many low quality goats were sold*/
 CREATE VIEW LowSold(quality,SoldCount) AS
 SELECT LowQuality.quality, Count(status)
 FROM LowQuality INNER JOIN Goats ON LowQuality.animal_id=Goats.animal_id
