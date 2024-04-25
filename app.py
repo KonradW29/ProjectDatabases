@@ -47,7 +47,7 @@ def SearchTag():
     heads = ['dam', 'tag', 'totalPoints']
     return render_template('results.html', rows=rows, heads=heads)
 
-# handle search group POST and serve result web page
+# handle group search POST and serve result web page
 @app.route('/SearchGroup', methods=['POST'])
 def SearchGroup():
     if (request.form['group'] == 'High'):
