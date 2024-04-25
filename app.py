@@ -34,12 +34,13 @@ def connect(query):
  
 app = Flask(__name__)
 
-# serve UI.html web page
+# serve UI.html web page, this is the main web page for the GUI
 @app.route("/")
 def form():
     return render_template('UI.html')
 
 # handle SearchTag POST and serve results.html web page
+#Use a nested query to find all the goats which have the same dam as the goat whose tag was inputted
 @app.route('/SearchTag', methods=['POST'])
 def SearchTag():
     rows = connect('SELECT dam, tag, totalPoints FROM SoloGoats WHERE dam = (SELECT dam FROM SoloGoats WHERE tag = \'' + str(request.form['tag']) + '\');')
@@ -47,6 +48,7 @@ def SearchTag():
     return render_template('results.html', rows=rows, heads=heads)
 
 # handle SearchGroup POST and serve results.html web page
+#Determine which group the user entered, before searching from the associated quality view
 @app.route('/SearchGroup', methods=['POST'])
 def SearchGroup():
     if (request.form['group'] == 'High'):

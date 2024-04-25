@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lan = "en">
 <head>
+    <!--Page information-->
     <title>Goat Database GUI</title>
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "wideth=device-width, initial-scale=1.0">
+    <!--CSS code to make the web page look more appealing-->
     <style>
         body {
             font-family:'Times New Roman', Times, serif;
@@ -57,10 +59,11 @@
     </style>
 </head>
 <body>
+    <!--First query implemented using a form-->
     <h1>Goat Database</h1><br>
     <div>
-        <h2>Search by goat tag</h2>
-        <p>Enter the tag of the goat to find all the goats related to its dam:</p>
+        <h2>Search for all the kids of your goat's dam</h2>
+        <p>Enter the tag of a goat to find the goats related to its dam below:</p>
     </div>
     <div>
         <form action = "/SearchTag" method="POST">
@@ -69,9 +72,10 @@
         </form>
     </div>
     <div>
-        <h2>Search by group</h2>
-        <p>Enter the quality range of goats you want to search below:</p>
+        <h2>Search by quality group</h2>
+        <p>Enter the overall quality of the goats you want to search below:</p>
     </div>
+    <!--Second query implemented using a form-->
     <div>
         <form action = "/SearchGroup" method="POST">
             <select name = "group" class = "input">
@@ -82,9 +86,11 @@
             <input type = "submit" value = "Enter"><br><br><br><br>
         </form>
     </div>
+    <!--Help button to give users more information about how to use the website-->
     <div>
         <button type = "button" onclick = "getHelp()">Help</button>       
-        <p id = "helpSection" hidden = "hidden">The first box returns all the goats which have the same dam as the goat whose tag is inputted. The second box returns the goats that fall into one of the 3 quality ranges that are selected.</p>
+        <p id = "helpSection" hidden = "hidden">The first box returns all the goats which have the same dam as the goat whose tag is inputted, to help identify dams associated with a desired attribute or point value. The second box returns the goats that fall into one of the three categories based on their point values, and the number of goats sold in each range, to help identify which quality type goats sell better.</p>
+        <!--Javascript code to make the help button work-->
         <script>
             function getHelp() {
                 let h = document.getElementById("helpSection");
