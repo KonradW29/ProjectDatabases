@@ -232,7 +232,7 @@ WHERE trait_code = 230 and alpha_value = '2';
 
 UPDATE GoatAttributes
 SET pointVal= pointVal + 5
-WHERE animal_id IN (SELECT animal_id FROM Goats WHERE Goats.stat_date - Goats.dob > interval '90 days');
+WHERE animal_id IN (SELECT animal_id FROM Goats WHERE Goats.last_weight_date - Goats.dob > interval '90 days');
 
 /*Views which are used for the database queries*/
 
