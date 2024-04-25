@@ -45,12 +45,12 @@
 <body>
     <h1>Goat Database</h1><br><br>
     <div>
-        <h2>Search by goat id</h2>
-        <p>Enter the id of the goat you want to search below:</p>
+        <h2>Search by goat tag</h2>
+        <p>Enter the tag of the goat you want to search below:</p>
     </div>
     <div>
-        <form action = "/SearchGoatId" method="POST">
-            <input type = "number" name = "animal_id"><br><br>
+        <form action = "/SearchTag" method="POST">
+            <input type = "text" name = "tag"><br><br>
             <input type = "submit" value = "Enter"><br><br><br><br>
         </form>
     </div>
@@ -71,7 +71,7 @@
     <div>
         <br><br>
         <button type = "button" onclick = "getHelp()">Help</button>
-        <p id = "helpSection", hidden = "hidden">The first box searches for a goat based on the provided goat id. The second box returns the goats that fall into one of the 3 quality ranges that are selected.</p>
+        <p id = "helpSection", hidden = "hidden">The first box returns all the goats which have the same dam as the goat which tag is inputted. The second box returns the goats that fall into one of the 3 quality ranges that are selected.</p>
         <script>
             function getHelp() {
                 let p = document.getElementById("helpSection");

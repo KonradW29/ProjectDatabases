@@ -40,9 +40,10 @@ def form():
     return render_template('UI.html')
 
 # handle venue POST and serve result web page
-@app.route('/SearchGoatId', methods=['POST'])
-def SearchGoatId():
-    rows = connect('SELECT dam, tag, totalPoints FROM SoloGoats WHERE dam = (SELECT dam FROM SoloGoats WHERE animal_id = ' + request.form['animal_id'] + ');')
+@app.route('/SearchTag', methods=['POST'])
+def SearchTag():
+    print(request.form['tag'])
+    rows = connect('SELECT dam, tag, totalPoints FROM SoloGoats WHERE dam = (SELECT dam FROM SoloGoats WHERE tag = \'' + str(request.form['tag']) + '\');')
     heads = ['dam', 'tag', 'totalPoints']
     return render_template('results.html', rows=rows, heads=heads)
 
