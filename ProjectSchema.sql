@@ -229,9 +229,10 @@ SET pointVal = pointVal + 3
 WHERE trait_code = 230 and alpha_value = '2';
 
 /*Number weaned points*/
+
 UPDATE GoatAttributes
 SET pointVal= pointVal + 5
-WHERE animal_id IN (SELECT animal_id FROM Goats WHERE Goats.stat_date - Goats.dob > interval '90 days' AND Goats.status = 'Dead');
+WHERE animal_id IN (SELECT animal_id FROM Goats WHERE Goats.stat_date - Goats.dob > interval '90 days');
 
 /*Views which are used for the database queries*/
 
@@ -256,7 +257,7 @@ WHERE totalPoints >= 80;
 CREATE VIEW MiddleQuality (tag, quality, animal_id,dam,totalPoints) AS
 SELECT SoloGoats.tag, 'Middle', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints
 FROM SoloGoats
-WHERE totalPoints >= 30 AND totalPoints <80;
+WHERE totalPoints >= 30 AND totalPoints < 80;
 
 /*View which groups goats into the low quality range, based on their total points */
 CREATE VIEW LowQuality (tag, quality, animal_id,dam,totalPoints) AS 
