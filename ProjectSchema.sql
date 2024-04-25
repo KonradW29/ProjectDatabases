@@ -1,3 +1,8 @@
+/*
+    2024 Goat Database Project
+    Konrad Wnorowski, Nicholas Merritt, Varun Pawar 
+*/
+
 --Animal table from Animal.csv
 DROP TABLE Animal;
 CREATE TABLE Animal (

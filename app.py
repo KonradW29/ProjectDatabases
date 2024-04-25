@@ -1,3 +1,6 @@
+#2024 Goat Database Project
+#Konrad Wnorowski, Nicholas Merritt, Varun Pawar 
+
 import psycopg2
 from config import config
 from flask import Flask, render_template, request
