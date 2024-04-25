@@ -8,15 +8,12 @@
         <!--CSS code to make the web page look more appealing-->
     <style>
         body {
-            font-family:'Times New Roman', Times, serif;
+            font-family:'Arial', sans-serif;
             background-color: aqua;
             margin: 0;
             padding: 20px;
         }
     
-        th:tr{
-            color: blue;
-        }
         tr:nth-of-type(2n) {
             border:1px solid black;
             background-color: rgba(150, 150, 150, 0.5);
@@ -26,10 +23,23 @@
             padding: 8px 8px;
             border: 1px solid black;
         }
+
+        .center {
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            font-size: 40px;
+        }
     </style>
 
     <body>
-        <table>
+        {% if rows|length > 0 %}
+        <table class = "center">
             <!-- column header for loop in jinja template -->
             <thead>
                 <tr>
@@ -49,5 +59,8 @@
             {%endfor%}
             </tbody>
         </table>
+        {% else %}
+        <p class = "error">Tag not found</p>
+        {% endif %}
     </body>
 </html>

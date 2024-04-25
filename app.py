@@ -44,7 +44,7 @@ def form():
 @app.route('/SearchTag', methods=['POST'])
 def SearchTag():
     rows = connect('SELECT dam, tag, totalPoints FROM SoloGoats WHERE dam = (SELECT dam FROM SoloGoats WHERE tag = \'' + str(request.form['tag']) + '\');')
-    heads = ['dam', 'tag', 'totalPoints']
+    heads = ['Dam', 'Tag', 'TotalPoints']
     return render_template('results.html', rows=rows, heads=heads)
 
 # handle SearchGroup POST and serve results.html web page
@@ -53,13 +53,13 @@ def SearchTag():
 def SearchGroup():
     if (request.form['group'] == 'High'):
         rows = connect('SELECT HighQuality.quality, tag, dam, totalPoints, SoldCount FROM HighQuality INNER JOIN HighSold ON HighQuality.quality = HighSold.quality;')
-        heads = ['quality', 'tag', 'dam', 'totalPoints', 'SoldCount']
+        heads = ['Quality', 'Tag', 'Dam', 'TotalPoints', 'SoldCount']
     elif (request.form['group'] == 'Middle'):
         rows = connect('SELECT MiddleQuality.quality, tag, dam, totalPoints, SoldCount FROM MiddleQuality INNER JOIN MiddleSold ON MiddleQuality.quality = MiddleSold.quality;');
-        heads = ['quality', 'tag', 'dam', 'totalPoints', 'SoldCount']
+        heads = ['Quality', 'Tag', 'Dam', 'TotalPoints', 'SoldCount']
     elif (request.form['group'] == 'Low'):
         rows = connect('SELECT LowQuality.quality, tag, dam, totalPoints, SoldCount FROM LowQuality INNER JOIN LowSold ON LowQuality.quality = LowSold.quality;')
-        heads = ['quality', 'tag', 'dam', 'totalPoints', 'SoldCount']
+        heads = ['Quality', 'Tag', 'Dam', 'TotalPoints', 'SoldCount']
     return render_template('results.html', rows=rows, heads=heads)
     
 if __name__ == '__main__':

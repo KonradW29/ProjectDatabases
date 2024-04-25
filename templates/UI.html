@@ -8,23 +8,32 @@
     <!--CSS code to make the web page look more appealing-->
     <style>
         body {
-            font-family:'Times New Roman', Times, serif;
+            font-family:'Arial', sans-serif;
             background-color: aqua;
             margin: 0;
             padding: 20px;
         }
 
+        section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius:  8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
         h1 {
             color: black;
-            font-size: 40 px;
+            font-size: 50px;
             font-weight: bold;
             margin-top: 0;
             margin-bottom: 20px;
+            text-align: center;
         }
 
         h2 {
             color: black;
-            font-size: 20 px;
+            font-size: 28px;
             font-weight: bold;
         }
 
@@ -53,41 +62,45 @@
 
         @media only screen and (max-width: 600px) {
             div {
-                width: calc(100% - 40 px);
+                width: calc(100% - 40px);
             }
         }
     </style>
 </head>
 <body>
-    <!--First query implemented using a form-->
-    <h1>Goat Database</h1><br>
+    <h1>Goat Database</h1>
+    <section>
+        <!--First query implemented using a form-->
+        <div>
+            <h2>Search for all the kids of your goat's dam</h2>
+            <p>Enter the tag of a goat to find the goats related to its dam below:</p>
+        </div>
+        <div>
+            <form action = "/SearchTag" method="POST">
+                <input type = "text" name = "tag"><br><br>
+                <input type = "submit" value = "Enter"><br><br>
+            </form>
+        </div>
+    </section>
+    <section>
+        <!--Second query implemented using a form-->
+        <div>
+            <h2>Search by quality group</h2>
+            <p>Enter the overall quality of the goats you want to search below:</p>
+        </div>
+        <div>
+            <form action = "/SearchGroup" method="POST">
+                <select name = "group" class = "input">
+                    <option>Low</option>
+                    <option>Middle</option>
+                    <option>High</option>
+                </select><br><br>
+                <input type = "submit" value = "Enter"><br><br><br><br>
+            </form>
+        </div>
+    </section>
     <div>
-        <h2>Search for all the kids of your goat's dam</h2>
-        <p>Enter the tag of a goat to find the goats related to its dam below:</p>
-    </div>
-    <div>
-        <form action = "/SearchTag" method="POST">
-            <input type = "text" name = "tag"><br><br>
-            <input type = "submit" value = "Enter"><br><br>
-        </form>
-    </div>
-    <div>
-        <h2>Search by quality group</h2>
-        <p>Enter the overall quality of the goats you want to search below:</p>
-    </div>
-    <!--Second query implemented using a form-->
-    <div>
-        <form action = "/SearchGroup" method="POST">
-            <select name = "group" class = "input">
-                <option>Low</option>
-                <option>Middle</option>
-                <option>High</option>
-            </select><br><br>
-            <input type = "submit" value = "Enter"><br><br><br><br>
-        </form>
-    </div>
-    <!--Help button to give users more information about how to use the website-->
-    <div>
+        <!--Help button to give users more information about how to use the website-->
         <button type = "button" onclick = "getHelp()">Help</button>       
         <p id = "helpSection" hidden = "hidden">The first box returns all the goats which have the same dam as the goat whose tag is inputted, to help identify dams associated with a desired attribute or point value. The second box returns the goats that fall into one of the three categories based on their point values, and the number of goats sold in each range, to help identify which quality type goats sell better.</p>
         <!--Javascript code to make the help button work-->
