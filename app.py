@@ -39,7 +39,7 @@ app = Flask(__name__)
 def form():
     return render_template('UI.html')
 
-# handle venue POST and serve result web page
+# handle tag search POST and serve result web page
 @app.route('/SearchTag', methods=['POST'])
 def SearchTag():
     print(request.form['tag'])
@@ -47,7 +47,7 @@ def SearchTag():
     heads = ['dam', 'tag', 'totalPoints']
     return render_template('results.html', rows=rows, heads=heads)
 
-# handle venue POST and serve result web page
+# handle search group POST and serve result web page
 @app.route('/SearchGroup', methods=['POST'])
 def SearchGroup():
     if (request.form['group'] == 'High'):
