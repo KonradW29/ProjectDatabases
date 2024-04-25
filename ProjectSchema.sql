@@ -99,9 +99,11 @@ CREATE TABLE SessionAnimalTrait (
     is_history integer NOT NULL default 0,
     is_exported integer NOT NULL default 0,
     is_deleted integer default 0,
-    primary key(session_id, animal_id, trait_code, when_measured));
-    DROP TABLE PicklistValue;
-    CREATE TABLE PicklistValue (
+    primary key(session_id, animal_id, trait_code, when_measured)
+);
+
+DROP TABLE PicklistValue;
+CREATE TABLE PicklistValue (
     picklistvalue_id integer primary key,
     picklist_id integer,
     value varchar(30)
