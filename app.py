@@ -51,14 +51,14 @@ def SearchTag():
 @app.route('/SearchGroup', methods=['POST'])
 def SearchGroup():
     if (request.form['group'] == 'High'):
-        rows = connect('SELECT quality, tag, dam, totalPoints FROM HighQuality;')
-        heads = ['quality', 'tag', 'dam', 'totalPoints']
+        rows = connect('SELECT HighQuality.quality, tag, dam, totalPoints, SoldCount FROM HighQuality INNER JOIN HighSold ON HighQuality.quality = HighSold.quality;')
+        heads = ['quality', 'tag', 'dam', 'totalPoints', 'SoldCount']
     elif (request.form['group'] == 'Middle'):
-        rows = connect('SELECT quality, tag, dam, totalPoints FROM MiddleQuality;')
-        heads = ['quality', 'tag', 'dam', 'totalPoints']
+        rows = connect('SELECT MiddleQuality.quality, tag, dam, totalPoints, SoldCount FROM MiddleQuality INNER JOIN MiddleSold ON MiddleQuality.quality = MiddleSold.quality;');
+        heads = ['quality', 'tag', 'dam', 'totalPoints', 'SoldCount']
     elif (request.form['group'] == 'Low'):
-        rows = connect('SELECT quality, tag, dam, totalPoints FROM LowQuality;')
-        heads = ['quality', 'tag', 'dam', 'totalPoints']
+        rows = connect('SELECT LowQuality.quality, tag, dam, totalPoints, SoldCount FROM LowQuality INNER JOIN LowSold ON LowQuality.quality = LowSold.quality;')
+        heads = ['quality', 'tag', 'dam', 'totalPoints', 'SoldCount']
     return render_template('results.html', rows=rows, heads=heads)
     
 if __name__ == '__main__':

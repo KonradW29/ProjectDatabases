@@ -43,15 +43,15 @@
     </style>
 </head>
 <body>
-    <h1>Goat Database</h1><br><br>
+    <h1>Goat Database</h1><br>
     <div>
         <h2>Search by goat tag</h2>
-        <p>Enter the tag of the goat you want to search below:</p>
+        <p>Enter the tag of the goat to find all the goats related to its dam:</p>
     </div>
     <div>
         <form action = "/SearchTag" method="POST">
             <input type = "text" name = "tag"><br><br>
-            <input type = "submit" value = "Enter"><br><br><br><br>
+            <input type = "submit" value = "Enter"><br><br>
         </form>
     </div>
     <div>
@@ -65,17 +65,21 @@
                 <option>Middle</option>
                 <option>High</option>
             </select><br><br>
-            <input type = "submit" value = "Enter"><br><br>
+            <input type = "submit" value = "Enter"><br><br><br><br>
         </form>
     </div>
     <div>
-        <br><br>
-        <button type = "button" onclick = "getHelp()">Help</button>
-        <p id = "helpSection", hidden = "hidden">The first box returns all the goats which have the same dam as the goat which tag is inputted. The second box returns the goats that fall into one of the 3 quality ranges that are selected.</p>
+        <button type = "button" onclick = "getHelp()">Help</button>       
+        <p id = "helpSection" hidden = "hidden">The first box returns all the goats which have the same dam as the goat whose tag is inputted. The second box returns the goats that fall into one of the 3 quality ranges that are selected.</p>
         <script>
             function getHelp() {
-                let p = document.getElementById("helpSection");
-                p.removeAttribute("hidden");
+                let h = document.getElementById("helpSection");
+                
+                if (h.hasAttribute('hidden')) {
+                    h.removeAttribute("hidden");
+                }else {
+                    h.setAttribute("hidden", "hidden");
+                }
             }
         </script>
     </div>
