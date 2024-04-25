@@ -177,6 +177,7 @@ FROM SessionAnimalTrait;
 
 
 /*Updating GoatAttributes to insert point values*/
+
 /*Birth weight points*/
 UPDATE GoatAttributes
 SET pointVal = pointVal + 3
@@ -259,8 +260,6 @@ GROUP BY animal_id;
 CREATE VIEW SoloGoats (tag, quality, animal_id,dam,totalPoints) AS
 SELECT tag, '', Goats.animal_id, Goats.dam, SumOfPoints.totalPoints
 FROM Goats INNER JOIN SumOfPoints ON Goats.animal_id=SumOfPoints.animal_id;
-
-
 
 CREATE VIEW HighQuality (tag, quality, animal_id,dam,totalPoints) AS 
 SELECT SoloGoats.tag, 'High', SoloGoats.animal_id, SoloGoats.dam, SoloGoats.totalPoints

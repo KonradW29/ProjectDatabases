@@ -4,6 +4,43 @@
     <title>Goat Database GUI</title>
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "wideth=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family:'Times New Roman', Times, serif;
+            background-color: aqua;
+            margin: 0;
+            padding: 20px;
+        }
+
+        input[type="submit"], button {
+            background-color:chocolate;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4x 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover, button:hover {
+            background-color: black;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        @media only screen and (max-width: 600px) {
+            div {
+                width: calc(100% - 40 px);
+            }
+        }
+    </style>
 </head>
 <body>
     <h1>Goat Database</h1><br><br>
@@ -13,7 +50,7 @@
     </div>
     <div>
         <form action = "/SearchGoatId" method="POST">
-            <input type = "number" name = "animal_id"><br>
+            <input type = "number" name = "animal_id"><br><br>
             <input type = "submit" value = "Enter"><br><br><br><br>
         </form>
     </div>
