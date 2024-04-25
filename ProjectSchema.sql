@@ -231,7 +231,7 @@ WHERE trait_code = 230 and alpha_value = '2';
 /*Number weaned points*/
 UPDATE GoatAttributes
 SET pointVal= pointVal + 5
-WHERE animal_id IN (SELECT animal_id FROM Goats WHERE Goats.dob - Goats.stat_date > interval '90 days' AND Goats.status = 'Dead');
+WHERE animal_id IN (SELECT animal_id FROM Goats WHERE Goats.stat_date - Goats.dob > interval '90 days' AND Goats.status = 'Dead');
 
 /*Views which are used for the database queries*/
 
