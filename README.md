@@ -1,1 +1,8 @@
-For everything to work the database should be called project and run the prompts as normal. The queries are as follows, if you know a goat tag you can enter it and it displays all the goats with the same dam (including the goat that was searched), however if you do not know a goat tag and want to just see a list of goats you can then enter either High, Middle, or Low quality into the drop down menu of the next query. This will display what you will need. To return to the main page from the results page, simply hit the back arrow. On the main page, there is a help button, which when toggled can provide clarifying information to the user.
+To start, first pull/downlaod content from the git and save it to your computer
+For the SQL code, simply use the createDB command and you MUST name it "project"
+After this access the databases using psql project, and once inside the databases run the \i ProjectSchema.sql command
+The command will begin to copy, update, insert, drop tables into the database
+\q to exit of the psql and began to foilow the FLASK instructions given by Dr.Degood
+Run the flask and open the link
+Now you can enter a TAG into the first query of the Database or select one of the three qualites from the databases and give you those results.
+Happy Goating!
