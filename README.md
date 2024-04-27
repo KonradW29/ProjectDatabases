@@ -3,7 +3,7 @@ For the SQL code, simply use the createDB command and you MUST name the database
 After this access the database using psql project, and once inside the databases run the \i ProjectSchema.sql command
 The command will begin to copy, update, insert, drop tables into the database
 Use \q to exit of the psql
-Run the flask code, to open the website, by executing export Flask_APP=app.py, and flask run, then open the link provided. Follow the FLASK instructions given in Professor Degood's github for further instructions (https://github.com/jdegood/flask7dbs/blob/main/app.py)
+Run the flask code, to open the website, by executing export Flask_APP=app.py, and flask run, then open the link provided. Follow the FLASK instructions given in Professor Degood's github for further instructions: (https://github.com/jdegood/flask7dbs/blob/main/app.py).
 Now you can enter a TAG into the first query of the Database or select one of the three qualites from the databases and give you those results.
 Happy Goating!
 ![Screenshot 2024-04-25 204111](https://github.com/TCNJ-degoodj/project-group06/assets/159069099/10ef9c0e-b529-4f6c-98ea-abc2915ec928)
